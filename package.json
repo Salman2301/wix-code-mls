@@ -6,14 +6,17 @@
   "scripts": {
     "build": "babel lib --out-dir dist",
     "prepublish": "babel lib --out-dir dist",
-    "buildI" : "babel init.js -d build"
+    "buildI": "babel init.js -d build"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.18.0",
-    "chalk": "^2.4.1",
+    "chalk": "^2.4.2",
+    "inquirer": "^7.1.0",
     "moment": "^2.22.2",
+    "node-bash-title": "0.0.2",
+    "node-cron": "^2.0.3",
     "optimist": "^0.6.1",
     "promise-queue": "^2.2.5",
     "promise-writable": "^3.1.2",
