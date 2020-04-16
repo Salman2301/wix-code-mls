@@ -6,7 +6,8 @@
   "scripts": {
     "build": "babel lib --out-dir dist",
     "prepublish": "babel lib --out-dir dist",
-    "buildI": "babel init.js -d build"
+    "buildI": "babel init.js -d build",
+    "start": "node init.js"
   },
   "author": "",
   "license": "ISC",
