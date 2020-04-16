@@ -23,7 +23,13 @@ The structure of the schema file includes the following
     "syncImages": true,
     "filter": "MLS Query filter",
     "wixCollection": "collection name",
+<<<<<<< HEAD
     "overrideGetImagesUrl": "filename"
+=======
+    "overrideGetImagesUrl": "filename",
+    "alternateImageObjectType": "objectType"
+    "importImagesToWixMedia": true
+>>>>>>> 6bf40b0afea0aefec10acd3e4d3664dda9d1bb34
   },
   ...
 ]
@@ -55,6 +61,7 @@ ReplyText: RETS Server: Invalid Resource parameter in request.
 
 To prevent syncing images for that resource, set `syncImages` to `false`.
 
+<<<<<<< HEAD
 ## Alternate strategy for fetching image URLs
 
 By specifying the `overrideGetImagesUrl` parameter, the integration will lookup a Node.js module relative to the root of the running process.
@@ -92,6 +99,12 @@ module.exports = function defaultGetImageUrls(client, item, resourceID, keyField
     })
 };
 ```
+=======
+## Supporting Images
+
+The `overrideGetImagesUrl`, `alternateImageObjectType` and `importImagesToWixMedia` properties enable customizing
+how to get images, given the support and requirements of different MLS servers. Read more at [images](images.md).
+>>>>>>> 6bf40b0afea0aefec10acd3e4d3664dda9d1bb34
 
 ## Filtering Resource & Class
 

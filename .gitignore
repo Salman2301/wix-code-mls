@@ -1,3 +1,4 @@
+
 ### Node template
 # Logs
 logs
@@ -17,8 +18,13 @@ target
 
 # Dependency directories
 node_modules
+
+# Build Files
+lib
+
 # Integration details conf and schema file
 Integration
+
 # Optional npm cache directory
 .npm
 

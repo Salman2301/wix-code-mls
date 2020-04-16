@@ -142,16 +142,17 @@ The setup process involves 3 stages -
       "username": "...RETS SERVER USERNAME...",
       "password": "...RETS SERVER PASSWORD...",
       "secret": "SOME AUTO GENERATED SECRET",
-      "batchCheckUpdateState": "...WIX WEBSITE URL.../_functions-dev/batchCheckUpdateState",
-      "saveItemBatch": "...WIX WEBSITE URL.../_functions-dev/saveItemBatch",
-      "clearStale": "...WIX WEBSITE URL.../_functions-dev/clearStale",
-      "batchSize": 50
+      "siteUrl": "...WIX WEBSITE URL...",
+      "sandboxLive": "sandbox",
+      "batchSize": 40
     }
    ```
    
 1. Update the `loginUrl`, `username` and `password` with the values you got for the MLS server.
 
-1. Update the `batchCheckUpdateState`, `saveItemBatch` and `clearStale` with the URL of your Wix Code website
+1. Update the `siteUrl` with the URL of your Wix Code website.
+
+1. When ready to run the integration on the live database, update `sandboxLive` to 'live'.
 
 1. If, when running, you get an error message that indicates requests too large for Wix Data
 (currently, those appear as "Internal wixData error: Unknown error."), try to decrease the batchSize.
@@ -187,7 +188,9 @@ The setup process involves 3 stages -
        "sync": true,
        "syncImages": true,
        "wixCollection": "resource_name",
-       "overrideGetImagesUrl": "filename"
+       "overrideGetImagesUrl": "filename",
+       "alternateImageObjectType": "Object-Type",
+       "importImagesToWixMedia": true
      },
      ...
    ]  
@@ -203,8 +206,13 @@ The setup process involves 3 stages -
    * `sync` - should this table (for this resource and class) be synced to the Wix Code website?
    * `syncImages` - should we attempt to sync images for this resource / class? As some resources do not have images, trying to sync images will only slow down the integration and report some errors. It will not prevent the integration from working.
    * `filter` [optional] - optional filter to limit the sync to only a part of the MLS table. Read more at [schema](schema.conf.md).
+   * `noPaging` [optional] - optional indicator for not using paging (skip and limit) for servers who do not support paging
    * `wixCollection` - the name of the collection in the Wix Code site to sync the data into. You can change this name.
-   * `overrideGetImagesUrl` [optional] - filename for an alternative strategy to get resource images. Read more at [schema](schema.conf.md).
+   * `overrideGetImagesUrl` [optional] - filename for an alternative strategy to get resource images. Read more at [schema](schema.conf.md), [images](images.md).
+   * `alternateImageObjectType` [optional] - the object type to use with getObject operation for getting image URLs. The default value is `Image`.
+      With some MLS vendors, in order to get high resolution photos, we need to specify 'HiRes'. Read more at [images](images.md).
+   * `importImagesToWixMedia` [optional] - if set to true, will import the images to wix media. Required for servers who do not support getObject with Location=1.
+      Read more at [images](images.md).
 
 1. For each `wixCollection` written in the `schema.json` file, you need to create a collection in the Wix Code website. 
 
@@ -239,11 +247,3 @@ The next step is to setup a scheduled run for the integration code using cron or
 ```
 node wix-code-mls.js run -c conf.json -s schema.json
 ```
-# Added a CLI + Scheduler
-after `npm install`
-run `node init` on command line
-follow the instruction to create conf, schema file on the "Integration" folder
-
-## attribution
-
-The Wix MLS integration was developed with the help of www.wixmls.com - MLS® data and information integration into the Wix.com platform by Rocket Web Labs Inc.

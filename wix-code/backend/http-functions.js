@@ -2,6 +2,7 @@ import {ok, serverError, forbidden} from 'wix-http-functions';
 import wixData from 'wix-data';
 import crypto from 'crypto';
 import PromiseQueue from 'promise-queue';
+import {mediaManager} from 'wix-media-backend';
 
 const secret = '...YOUR wix-code-rets SECRET, FROM THE CONFIG FILE...';
 // URL to call this HTTP function from your published site looks like:
@@ -162,6 +163,54 @@ export async function post_batchCheckUpdateState(request) {
   }
 }
 
+export async function post_getImageUploadUrl(request) {
+  console.log('getImageUploadUrl start');
+  try {
+    const payload = await request.body.text();
+    const payloadJson = JSON.parse(payload, dateReviver);
+
+    const hmac = crypto.createHmac('sha256', secret);
+    hmac.update(JSON.stringify(payloadJson.data, dateReplacer));
+    if (hmac.digest('hex') !== payloadJson.signature) {
+      return forbidden({body: 'invalid signature'});
+    }
+
+    const mimeTypes = payloadJson.data.mimeTypes;
+    const resource = payloadJson.data.resource;
+    const id = payloadJson.data.id;
+
+    const uniqueMimeTypes = [...new Set(mimeTypes)];
+
+    let uploadUrlObjs = {};
+    await Queue(1, uniqueMimeTypes.map(mimeType => {
+      return async function() {
+        let uploadUrlObj = await mediaManager.getUploadUrl('/mls-images',
+          {
+            "mediaOptions": {
+              "mimeType": mimeType,
+              "mediaType": "image"
+            },
+            "metadataOptions": {
+              "isPrivate": false,
+              "isVisitorUpload": false,
+              "context": {
+                "resource": resource,
+                "id": id
+              }
+            }
+          });
+        uploadUrlObjs[mimeType] = uploadUrlObj;
+      }
+    }));
+
+    console.log('getImageUploadUrl complete', `${resource} id: ${id}`);
+    return ok({body: uploadUrlObjs});
+  }
+  catch (e) {
+    console.log('getImageUploadUrl error', e.message, e.stack);
+    return ok({body: e.stack});
+  }
+}
 
 const dateRegex = /^Date\((\d+)\)$/;
 function dateReviver(key, value) {
